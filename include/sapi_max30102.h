@@ -173,14 +173,16 @@ delay_t 	beatTime;
 void 	initStructMax30102( void );
 
 /* Inicializar device */
-bool_t	max30102_Init( max30102_t driver_config );
-bool_t  max30102_setup ( max30102_config_t _configDevice );
-bool_t	max30102_config ( uint8_t _register, uint8_t _param, uint8_t shitf );
-bool_t 	max30102_reset 	( void );
+bool_t	max30102_Init				( max30102_t driver_config );
+bool_t  max30102_setup 				( void );
+bool_t	max30102_config 			(  max30102_t driver_config, uint8_t _register, uint8_t _param, uint8_t shitf );
+bool_t max30102_reset				( max30102_t driver_config );
 
 /* Lectura de Part ID y Revision ID */
-uint8_t max30102_readPartID 		( void );
-uint8_t max30102_readRevisionID 	( void );
+uint8_t max30102_readPartID			( max30102_t driver_config );
+uint8_t readPartID					( max30102_t driver_config );
+uint8_t max30102_readRevisionID 	( max30102_t driver_config );
+uint8_t readRevisionID				( max30102_t driver_config );
 
 bool_t max30102_clearFIFO 			( max30102_t driver_config );
 float_t max30102_readNewValue 		( void );
@@ -192,6 +194,6 @@ float_t max30102_oxygenSaturation	( uint32_t * ledIr, uint32_t * ledR, int32_t n
 uint32_t max30102_hearBeat 			( void );
 
 /* Funcion para enmascarar registros */
-void 	max30102_maskRegister ( uint8_t _register, uint8_t _mask, uint8_t bitMask );
+void 	max30102_maskRegister ( max30102_t driver_config, uint8_t _register, uint8_t _mask, uint8_t bitMask );
 
 #endif /* SAPI_MAX30102_H_ */
