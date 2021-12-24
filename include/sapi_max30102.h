@@ -160,6 +160,7 @@ typedef struct{
 	uint32_t 		datoLeidoRed[32];
 	uint32_t 		datoLeidoIr[32];
 	int32_t 		numberSamplesAvailable;
+	
 	/* buffer para lectura y escritura de registros */
 	uint8_t 		_buffer;
 
@@ -181,7 +182,7 @@ bool_t 	max30102_reset 	( void );
 uint8_t max30102_readPartID 		( void );
 uint8_t max30102_readRevisionID 	( void );
 
-bool_t 	max30102_clearFIFO 			( void );
+bool_t max30102_clearFIFO 			( max30102_t driver_config );
 float_t max30102_readNewValue 		( void );
 int16_t max30102_check 				( void );
 uint8_t max30102_getWritePointer 	( void );

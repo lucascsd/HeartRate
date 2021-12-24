@@ -16,5 +16,6 @@ bool_t i2cInit_CIAA_port ( i2cMap_t i2cNumber, uint32_t clockRateHz );
 bool_t max30102Write_CIAA_port ( i2cMap_t  i2cNumber, uint8_t  i2cSlaveAddress, uint8_t registerAddr, uint8_t data );
 bool_t max30102Read_CIAA_port ( i2cMap_t  i2cNumber, uint8_t  i2cSlaveAddress, uint8_t registerAddr, uint8_t* receiveDataBuffer, uint16_t receiveDataBufferSize );
 uint32_t delay_CIAA_port ( void );
+float_t raizCuadrada ( float_t dato);
 
 #endif /* MAX30102_CIAA_PORT_H_ */

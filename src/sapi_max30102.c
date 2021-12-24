@@ -5,6 +5,7 @@
  *      Author: lucascsd
  */
 #include "sapi_max30102.h"
+#include "max30102_CIAA_port.h"
 
 /* Variables goblaes */
 
@@ -18,26 +19,22 @@ max30102_config_t _config;
 bool_t max30102_Init( max30102_t driver_config )
 {
 
-	// _max30102._i2cPortFn 	= driver_config._i2cPortFn;
-	// _max30102._i2cWriteFn 	= driver_config._i2cWriteFn;
-	// _max30102._i2cReadFn 	= driver_config._i2cReadFn;
-	// _max30102._delay		= driver_config._delay;
-
-	// /* Selecciono puerto I2C e inicializo */
-	// if ( !_max30102._i2cPortFn(I2C0, MAX30102_I2C_RATE_STD) )
-	// 	return FALSE;
+	_max30102._i2cPortFn 	= driver_config._i2cPortFn;
+	_max30102._i2cWriteFn 	= driver_config._i2cWriteFn;
+	_max30102._i2cReadFn 	= driver_config._i2cReadFn;
+	_max30102._delay		= driver_config._delay;
 
 	/* Selecciono puerto I2C e inicializo */
-	if ( !i2cInit_CIAA_port(I2C0, MAX30102_I2C_RATE_STD) )
+	if ( !_max30102._i2cPortFn(I2C0, MAX30102_I2C_RATE_STD) )
 		return FALSE;
 
 	/* Verificar conexión de MAX30102 */
 	if ( !max30102_readPartID( ) )
-		return false;
+		return FALSE;
 
 	/* Lectura de Revision ID */
 	if ( !max30102_readRevisionID ( ) )
-		return false;
+		return FALSE;
 
 	/* POR register */
 	if ( !max30102_reset() )
@@ -115,10 +112,6 @@ bool_t max30102_setup ( max30102_config_t _configDevice )
 	if ( !max30102_config ( LED_CTRL_REG_12, MULTILED_CONTROL_IR, 4 ) )
 		return FALSE;
 
-	/* Reset the FIFO before we begin checking the sensor */
-	if ( !max30102_clearFIFO() )
-		return FALSE;
-
 	return TRUE;
 }
 
@@ -152,14 +145,14 @@ bool_t max30102_reset ()
 
 }
 
-bool_t max30102_clearFIFO ( )
+bool_t max30102_clearFIFO ( max30102_t driver_config )
 {
 
-	if ( !_max30102._i2cWriteFn ( I2C0, MAX_ADDRESS, FIFO_WRITE_POINTER, 0x00 ) )
+	if ( !driver_config._i2cWriteFn ( I2C0, MAX_ADDRESS, FIFO_WRITE_POINTER, 0x00 ) )
 		return FALSE;
-	if ( !_max30102._i2cWriteFn ( I2C0, MAX_ADDRESS, OVERFLOW_COUNTER, 0x00 ) )
+	if ( !driver_config._i2cWriteFn ( I2C0, MAX_ADDRESS, OVERFLOW_COUNTER, 0x00 ) )
 		return FALSE;
-	if ( !_max30102._i2cWriteFn ( I2C0, MAX_ADDRESS, FIFO_READ_POINTER, 0x00 ) )
+	if ( !driver_config._i2cWriteFn ( I2C0, MAX_ADDRESS, FIFO_READ_POINTER, 0x00 ) )
 		return FALSE;
 
 	return TRUE;
@@ -227,7 +220,7 @@ int16_t max30102_check ( )
 		spo2 = max30102_oxygenSaturation ( _config.datoLeidoIr, _config.datoLeidoRed, _config.numberSamplesAvailable );
 
 	} //FIN readPtr != writePtr
-	max30102_clearFIFO();
+
 	return spo2;
 }
 
@@ -258,7 +251,10 @@ float_t max30102_oxygenSaturation (uint32_t * ledIr, uint32_t * ledR, int32_t nu
 	rmsRed = rmsRed / numSamples;
 	rmsIr = rmsIr / numSamples;
 
-	R = ( sqrt( rmsRed ) / avgRed ) / ( sqrt( rmsIr ) / avgIr );
+	float_t sqrtRmsRed = sqrt( rmsRed ) / avgRed;
+	float_t sqrtRmsIr = sqrt( rmsIr ) / avgIr;
+
+	R = sqrtRmsRed / sqrtRmsIr;
 
 	spo2 = 110 - 17*R;
 

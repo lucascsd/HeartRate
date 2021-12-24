@@ -20,7 +20,6 @@
 
 bool_t i2cInit_CIAA_port ( i2cMap_t i2cNumber, uint32_t clockRateHz )
 {
-
 	/* Selecciono puerto I2C e inicializo */
 	if ( !i2cInit ( i2cNumber, clockRateHz) )
 		return FALSE;
@@ -31,7 +30,6 @@ bool_t i2cInit_CIAA_port ( i2cMap_t i2cNumber, uint32_t clockRateHz )
 
 /* Escritura en el registro definido por registerAddr */
 bool_t max30102Write_CIAA_port ( i2cMap_t  i2cNumber, uint8_t  i2cSlaveAddress, uint8_t registerAddr, uint8_t data )
-
 {
 
 	uint8_t transmitDataBuffer[2];
@@ -61,4 +59,9 @@ uint32_t delay_CIAA_port(void)
 {
 	tick_t number_of_ticks = tickRead();
 	return (uint32_t)number_of_ticks;
+}
+
+float_t raizCuadrada ( float_t dato)
+{
+	return sqrt ( dato );
 }
